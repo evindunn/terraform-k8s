@@ -124,6 +124,20 @@
           # Allow deleting cephfs volumes
           mon_allow_pool_delete = true
 
+    - name: Write the ceph private key
+      when: ansible_hostname.startswith("ceph0")
+      shell: mv /var/opt/id_ed25519 /home/debian/.ssh/ && chown debian:debian /home/debian/.ssh/id_ed25519
+
+    - name: Write the ceph public key to authorized_keys
+      when: not ansible_hostname.startswith("ceph0")
+      blockinfile:
+        path: /home/debian/.ssh/authorized_keys
+        create: yes
+        owner: debian
+        group: debian
+        mode: "644"
+        block: "${ceph_public_key}" 
+
     - debug: 
         msg: "Playbook finished on {{ ansible_date_time.date }} at {{ ansible_date_time.time }} {{ ansible_date_time.tz }}"
 

@@ -4,7 +4,21 @@ module "ceph_domains" {
   ssh_public_key    = file(local_file.ssh_key_public.filename)
   node_count        = 3
   network_id        = libvirt_network.bridge.id
-  ansible_playbook  = file("${path.module}/files/ansible-ceph-prepare.yml")
+  ansible_playbook  = templatefile(
+    "${path.module}/files/ansible-ceph-prepare.yml",
+    {
+      ceph_public_key = tls_private_key.ceph_key_pair.public_key_openssh
+    }
+  )
+  extra_files       = [
+    {
+      hostname      = "ceph0"
+      path          = "/var/opt/id_ed25519"
+      owner         = "debian:debian"
+      permissions   = "0600"
+      content       = tls_private_key.ceph_key_pair.private_key_pem
+    }
+  ]
   mac_addresses     = [
     "54:52:00:00:01:00",
     "54:52:00:00:01:01",
