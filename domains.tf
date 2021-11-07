@@ -26,7 +26,7 @@ module "ceph_domains" {
   ]
   data_volumes      = {
     count = 1
-    size  = 4295000000 # 4GiB
+    size  = 5369000000 # 5GiB
   }
 }
 
