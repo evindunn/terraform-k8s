@@ -1,6 +1,7 @@
 module "ceph_domains" {
   source            = "github.com/evindunn/terraform-kvm-module"
   hostname_prefix   = "ceph"
+  ssh_public_key    = file(local_file.ssh_key_public.filename)
   node_count        = 3
   ansible_playbook  = "./ansible-ceph-prepare.yml"
   network_id        = libvirt_network.bridge.id
@@ -18,6 +19,7 @@ module "ceph_domains" {
 module "k8s_domains" {
   source            = "github.com/evindunn/terraform-kvm-module"
   hostname_prefix   = "k8s"
+  ssh_public_key    = file(local_file.ssh_key_public.filename)
   node_count        = 3
   ansible_playbook  = "./ansible-k8s-prepare.yml"
   network_id        = libvirt_network.bridge.id

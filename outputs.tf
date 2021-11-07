@@ -1,17 +1,9 @@
-output "ceph_private_key" {
-  value = module.ceph_domains.private_key
+output "private_key" {
+  value = local_file.ssh_key_private.filename
 }
 
-output "ceph_public_key" {
-  value = module.ceph_domains.public_key
-}
-
-output "k8s_private_key" {
-  value = module.k8s_domains.private_key
-}
-
-output "k8s_public_key" {
-  value = module.k8s_domains.public_key
+output "public_key" {
+  value = local_file.ssh_key_public.filename
 }
 
 output "ceph_vms" {
