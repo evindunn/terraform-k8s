@@ -1,0 +1,129 @@
+- hosts: localhost
+  connection: local
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Upgrade all packages
+      apt:
+        name: "*"
+        state: "latest"
+        force_apt_get: true
+
+    - name: Install docker dependencies
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gnupg
+
+    - name: Install extra packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - apparmor
+        - apparmor-profiles
+        - apparmor-profiles-extra
+
+    - name: Make sure apparmor service is enabled
+      service:
+        name: apparmor
+        state: started
+        enabled: true
+
+    - name: Add apparmor to the kernel
+      blockinfile:
+        block: |
+          if [ ! "$GRUB_CMDLINE_LINUX" = *"security=apparmor"* ]; then
+              GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX security=apparmor"
+          fi
+        path: /etc/default/grub.d/ZZ_apparmor.cfg
+        create: true
+        mode: "0755"
+      register: apparmor
+
+    - name: Update grub
+      shell: update-grub
+      when: apparmor.changed
+
+    - name: Add docker gpg key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+        keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+
+    - name: Add docker repository
+      apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_distribution_release | lower }} stable"
+        state: present
+        filename: docker
+
+    - name: Install docker
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+
+    - name: Make sure docker is enabled
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add debian user to docker group
+      user:
+        name: debian
+        groups: docker
+
+    - name: Add the ceph gpg key
+      apt_key:
+        url: https://download.ceph.com/keys/release.asc
+        state: present
+
+    - name: Add the ceph repository
+      apt_repository:
+        repo: "deb https://download.ceph.com/debian-{{ ceph_version }} {{ ansible_distribution_release | lower }} main"
+        state: present
+        filename: ceph
+
+    - name: Install ceph packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - ceph-common
+        - cephadm
+
+    - name: Write the initial ceph config
+      blockinfile:
+        path: /home/debian/ceph_initial.conf
+        create: yes
+        owner: debian
+        group: debian
+        block: |
+          [global]
+          osd_pool_default_size = 2
+          osd_pool_default_min_size = 1
+          osd_pool_default_pg_autoscale_mode = on
+
+          [mon]
+          # Where monitors will listen for clients
+          public_network = 192.168.110.0/24
+
+          # enable the management of /etc/ceph/ceph.conf files on all hosts
+          mgr_cephadm_manage_etc_ceph_ceph_conf = true
+
+          # Allow deleting cephfs volumes
+          mon_allow_pool_delete = true
+
+    - debug: 
+        msg: "Playbook finished on {{ ansible_date_time.date }} at {{ ansible_date_time.time }} {{ ansible_date_time.tz }}"
+
+  vars:
+    ceph_version: octopus

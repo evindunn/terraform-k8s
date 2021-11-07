@@ -1,0 +1,155 @@
+- hosts: localhost
+  connection: local
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Upgrade all packages
+      apt:
+        name: "*"
+        state: "latest"
+        force_apt_get: true
+
+    - name: Install docker dependencies
+      package:
+        state: present
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+
+    - name: Add the ceph gpg key
+      apt_key:
+        url: https://download.ceph.com/keys/release.asc
+        state: present
+
+    - name: Add the ceph repository
+      apt_repository:
+        repo: "deb https://download.ceph.com/debian-{{ ceph_version }} {{ ansible_distribution_release | lower }} main"
+        state: present
+        filename: ceph
+
+    - name: Install extra packages
+      package:
+        state: present
+        name:
+          # These are for rook
+          - ceph-common
+          - lvm2
+          # These are for security
+          - apparmor
+          - apparmor-profiles
+          - apparmor-profiles-extra
+
+    - name: Make sure apparmor service is enabled
+      service:
+        name: apparmor
+        state: started
+        enabled: true
+
+    - name: Add apparmor to the kernel
+      blockinfile:
+        block: |
+          if [ ! "$GRUB_CMDLINE_LINUX" = *"security=apparmor"* ]; then
+              GRUB_CMDLINE_LINUX="$GRUB_CMDLINE_LINUX security=apparmor"
+          fi
+        path: /etc/default/grub.d/ZZ_apparmor.cfg
+        create: true
+        mode: "0755"
+      register: apparmor
+
+    - name: Update grub
+      shell: update-grub
+      when: apparmor.changed
+
+    - name: Add docker gpg key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+        keyring: /usr/share/keyrings/docker-archive-keyring.gpg
+
+    - name: Add docker repository
+      apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_distribution_release | lower }} stable"
+        state: present
+        filename: docker
+
+    - name: Install docker
+      package:
+        state: present
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+
+    - name: Make sure docker is enabled
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add debian user to docker group
+      user:
+        name: debian
+        groups: docker
+
+    - name: Make sure k8s kernel modules are enabled
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ required_kernel_modules }}"
+    
+    - name: Load k8s kernel modules at boot
+      lineinfile:
+        path: /etc/modules-load.d/ZZ-rke-modules.conf
+        line: "{{ item }}"
+        create: true
+      loop: "{{ required_kernel_modules }}"
+
+    - name: Set k8s sysctl settings
+      sysctl:
+        name: net.bridge.bridge-nf-call-iptables
+        value: "1"
+        state: present
+        reload: true
+        sysctl_file: /etc/sysctl.d/ZZ-rke.conf
+
+    - debug: 
+        msg: "Playbook finished on {{ ansible_date_time.date }} at {{ ansible_date_time.time }} {{ ansible_date_time.tz }}"
+
+  vars:
+    ceph_version: octopus
+    # Commented ones aren't present in debian
+    required_kernel_modules:
+      - br_netfilter
+      - ip6_udp_tunnel
+      - ip_set
+      - ip_set_hash_ip
+      - ip_set_hash_net
+      - iptable_filter
+      - iptable_mangle
+      - iptable_nat
+      - iptable_raw
+      - nf_conntrack
+      # - nf_conntrack_ipv4
+      - nf_conntrack_netlink
+      - nf_defrag_ipv4
+      - nf_nat
+      - nf_nat_ipv4
+      # - nf_nat_masquerade_ipv4
+      - nfnetlink
+      - rbd
+      - udp_tunnel
+      - veth
+      - vxlan
+      - x_tables
+      - xt_addrtype
+      - xt_comment
+      - xt_conntrack
+      - xt_mark
+      - xt_multiport
+      - xt_nat
+      - xt_recent
+      - xt_set
+      - xt_statistic
+      - xt_tcpudp
