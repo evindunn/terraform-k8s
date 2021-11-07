@@ -20,10 +20,12 @@ localhost                  : ok=17   changed=13   unreachable=0    failed=0
 Connection to ceph0 closed by remote host
 ```
 
+## Ceph setup
+
 Once the ceph playbook is complete, a new cluster can be bootstrapped by running the following in ceph0:
 1. Deploy ceph0 as the initial ceph monitor: `debian@ceph0:~$ sudo cephadm bootstrap --user debian --mon-ip 192.168.1.50 --config ceph_initial.conf` (Replace mon-ip with ceph0's static IP)
-2. Copy the ceph public key to the remaining nodes: `for node in ceph1 ceph2; do ssh-copy-id -f -i /etc/ceph/ceph.pub debian@$host; done`
-3. Add the remaining nodes to the cluster: `for node in ceph1 ceph2; do sudo ceph orch add $host; done`
+2. Copy the ceph public key to the remaining nodes: `for node in ceph1 ceph2; do ssh-copy-id -f -i /etc/ceph/ceph.pub debian@$node; done`
+3. Add the remaining nodes to the cluster: `for node in ceph1 ceph2; do sudo ceph orch add $node; done`
 4. Make all of the nodes monitors: `sudo ceph orch apply mon 3`
 5. Add all availables disks on all nodes as osds: `sudo ceph orch apply osd --all-available-devices`
 6. Deploy two metadata servers for cephfs: `ceph orch apply mds cephfs --placement=2`
