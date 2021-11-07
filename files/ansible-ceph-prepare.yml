@@ -101,11 +101,13 @@
         - cephadm
 
     - name: Write the initial ceph config
+      when: ansible_hostname.startswith("ceph0")
       blockinfile:
         path: /home/debian/ceph_initial.conf
         create: yes
         owner: debian
         group: debian
+        mode: "600"
         block: |
           [global]
           osd_pool_default_size = 2
@@ -114,7 +116,7 @@
 
           [mon]
           # Where monitors will listen for clients
-          public_network = 192.168.110.0/24
+          public_network = 192.168.1.0/24
 
           # enable the management of /etc/ceph/ceph.conf files on all hosts
           mgr_cephadm_manage_etc_ceph_ceph_conf = true
