@@ -31,3 +31,11 @@ Once the ceph playbook is complete, a new cluster can be bootstrapped by running
 6. Deploy two metadata servers for cephfs: `sudo ceph orch apply mds cephfs --placement=2`
 7. Create a cephfs filesystem for the kubernetes cluster: `sudo ceph fs volume create kubernetes`
 
+## Kubernetes Setup
+
+Once the k8s playbooks are complete, a new kubernetes cluster can be bootstrapped by:
+1. Edit [rke.yml](./rke.yml) with the IP addresses of the k8s nodes
+2. Edit [rke.yml](./rke.yml) with the terraform-generated ssh key for the nodes
+3. `rke up --config rke.yml`
+4. Configure and install the [Ceph CSI driver](https://artifacthub.io/packages/helm/ceph-csi/ceph-csi-cephfs)
+

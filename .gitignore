@@ -1,2 +1,5 @@
 .terraform*
 terraform.tfstate*
+rke.rkestate
+kube_config_rke.yml
+
