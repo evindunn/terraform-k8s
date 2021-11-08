@@ -1,0 +1,23 @@
+# Values for https://artifacthub.io/packages/helm/ceph-csi/ceph-csi-cephfs
+# Needs >= 3.4.0 for storageclass & secret to be created
+
+csiConfig:
+  - clusterID: 3be4a356-40ad-11ec-ac54-545200000100
+    monitors:
+      - ceph0.localdomain.net
+      - ceph1.localdomain.net
+      - ceph2.localdomain.net
+
+storageClass:
+  create: true
+  name: cephfs
+  clusterID: 3be4a356-40ad-11ec-ac54-545200000100
+  fsName: kubernetes
+  mountOptions:
+    - debug
+    - noatime
+
+secret:
+  create: true
+  adminID: admin
+  adminKey: "AQA/SolhuoKZORAA7sl/fhcda6GCAV+snHVYuw=="
