@@ -105,6 +105,11 @@
         group: debian
         mode: "600"
         block: |
+          [global]
+          osd_pool_default_size = 2
+          osd_pool_default_min_size = 1
+          osd_pool_default_pg_autoscale_mode = on
+
           [mon]
           # Where monitors will listen for clients
           public_network = 192.168.1.0/24
@@ -117,13 +122,10 @@
           mgr_cephadm_manage_etc_ceph_ceph_conf = true
 
           [osd]
-          osd_pool_default_size = 2
-          osd_pool_default_min_size = 1
-          osd_pool_default_pg_autoscale_mode = on
-          osd_memory_target = {{ ansible_memory_mb.real.total / 2 | int }}Mi
+          osd_memory_target = {{ (ansible_memory_mb.real.total / 2) | int }}Mi
 
           [mds]
-          osd_memory_target = {{ ansible_memory_mb.real.total / 4 | int }}Mi
+          mds_cache_memory_limit = {{ (ansible_memory_mb.real.total / 4) | int }}Mi
 
     - name: Write the ceph private key
       when: ansible_hostname.startswith("ceph0")
