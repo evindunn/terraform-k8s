@@ -1,9 +1,8 @@
-ssh_key_path: ~/.ssh/terraform-8f4a1b87-619f-28ef-c59b-f6e7cda3a7f1
+ssh_key_path: ~/.ssh/terraform_rsa
 
 authentication:
     strategy: x509
     sans:
-      - "k8s.localdomain.net"
       - "k8s0.localdomain.net"
       - "k8s1.localdomain.net"
       - "k8s2.localdomain.net"

@@ -35,7 +35,6 @@ Once the ceph playbook is complete, a new cluster can be bootstrapped by running
 
 Once the k8s playbooks are complete, a new kubernetes cluster can be bootstrapped by:
 1. Edit [rke.yml](./rke.yml) with the IP addresses of the k8s nodes
-2. Edit [rke.yml](./rke.yml) with the terraform-generated ssh key for the nodes
-3. `rke up --config rke.yml`
-4. Configure and install the [Ceph CSI driver](https://artifacthub.io/packages/helm/ceph-csi/ceph-csi-cephfs)
+2. `rke up --config rke.yml`
+3. Configure and install the [Ceph CSI driver](https://artifacthub.io/packages/helm/ceph-csi/ceph-csi-cephfs)
 
