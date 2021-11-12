@@ -120,10 +120,10 @@
           osd_pool_default_size = 2
           osd_pool_default_min_size = 1
           osd_pool_default_pg_autoscale_mode = on
-          osd_memory_target = {{ ansible_memory_mb.real.total / 2 | round(0, "floor") }}Mi
+          osd_memory_target = {{ ansible_memory_mb.real.total / 2 | int }}Mi
 
           [mds]
-          osd_memory_target = {{ ansible_memory_mb.real.total / 4 | round(0, "floor") }}Mi
+          osd_memory_target = {{ ansible_memory_mb.real.total / 4 | int }}Mi
 
     - name: Write the ceph private key
       when: ansible_hostname.startswith("ceph0")
