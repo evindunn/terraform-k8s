@@ -126,7 +126,8 @@
         msg: "Playbook finished on {{ ansible_date_time.date }} at {{ ansible_date_time.time }} {{ ansible_date_time.tz }}"
 
   vars:
-    ceph_version: octopus
+    ceph_version: pacific
+
     # Commented ones aren't present in debian
     required_kernel_modules:
       - br_netfilter
