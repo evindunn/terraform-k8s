@@ -1,9 +1,5 @@
-output "private_key" {
-  value = local_file.ssh_key_private.filename
-}
-
 output "public_key" {
-  value = local_file.ssh_key_public.filename
+  value = var.ssh_key_public
 }
 
 output "ceph_vms" {

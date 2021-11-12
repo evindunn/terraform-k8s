@@ -109,11 +109,6 @@
         group: debian
         mode: "600"
         block: |
-          [global]
-          osd_pool_default_size = 2
-          osd_pool_default_min_size = 1
-          osd_pool_default_pg_autoscale_mode = on
-
           [mon]
           # Where monitors will listen for clients
           public_network = 192.168.1.0/24
@@ -127,6 +122,10 @@
 
           [osd]
           # 2GiB max
+          osd_pool_default_size = 2
+          osd_pool_default_min_size = 1
+          osd_pool_default_pg_autoscale_mode = on
+
           osd_memory_target = 2147000000
 
     - name: Write the ceph private key

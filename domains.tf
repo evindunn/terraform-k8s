@@ -3,7 +3,7 @@ module "ceph_domains" {
   hostname_prefix   = "ceph"
   cpu_count         = 2
   ram_size          = 4096
-  ssh_public_key    = file(local_file.ssh_key_public.filename)
+  ssh_public_key    = file(pathexpand(var.ssh_key_public))
   node_count        = 3
   network_id        = libvirt_network.bridge.id
   mac_addresses     = [
@@ -25,6 +25,8 @@ module "ceph_domains" {
     {
       hostname      = "ceph0"
       path          = "/var/opt/id_ed25519"
+      owner         = "debian:debian"
+      permissions   = "0600"
       content       = tls_private_key.ceph_key_pair.private_key_pem
     }
   ]
@@ -35,11 +37,11 @@ module "k8s_domains" {
   hostname_prefix   = "k8s"
   cpu_count         = 2
   ram_size          = 4096
-  ssh_public_key    = file(local_file.ssh_key_public.filename)
+  ssh_public_key    = file(pathexpand(var.ssh_key_public))
   node_count        = 3
   ansible_playbook  = file("${path.module}/files/ansible-k8s-prepare.yml")
   network_id        = libvirt_network.bridge.id
-  os_disk_size      = 34360000000 # 32 GiB
+  os_disk_size      = 34360000512 # 32 GiB
   mac_addresses     = [
     "54:52:00:00:02:00",
     "54:52:00:00:02:01",
