@@ -1,7 +1,7 @@
 module "ceph_domains" {
   source            = "github.com/evindunn/terraform-kvm-module"
   hostname_prefix   = "ceph"
-  cpu_count         = 2
+  cpu_count         = 3
   ram_size          = 4096
   ssh_public_key    = file(pathexpand(var.ssh_key_public))
   node_count        = 3
@@ -35,7 +35,7 @@ module "ceph_domains" {
 module "k8s_domains" {
   source            = "github.com/evindunn/terraform-kvm-module"
   hostname_prefix   = "k8s"
-  cpu_count         = 2
+  cpu_count         = 3
   ram_size          = 4096
   ssh_public_key    = file(pathexpand(var.ssh_key_public))
   node_count        = 3
