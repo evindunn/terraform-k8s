@@ -1,7 +1,12 @@
 # terraform-k8s
-Three ceph nodes, three kubernetes nodes on kvm using [github.com/evindunn/terraform-kvm-module](https://github.com/evindunn/terraform-kvm-module). The setup assumes that kvm is configured and a bridge interface named 'br0' has been set up.
-Also assumed is that the static mac addresses configured in [domains.tf](./domains.tf) have been assigned a static
-IP in dhcp, and that a public key called `terraform_rsa.pub` is available at `~/.ssh`.
+Three ceph nodes, three kubernetes nodes on kvm using [github.com/evindunn/terraform-kvm-module](https://github.com/evindunn/terraform-kvm-module). The setup assumes: 
+- kvm is configured and a bridge interface named 'br0' has been set up
+- the static mac addresses configured in [domains.tf](./domains.tf) have been assigned a static
+IP in dhcp
+- a public key called `terraform_rsa.pub` is available at `~/.ssh`
+- the local network is 192.168.1.0/24 with dns search domain localdomain.net
+- the k8s nodes are resolvable at k8s[0-2].localdomain.net
+- the ceph nodes are resolvable at ceph[0-2].localdomain.net
 
 Each set of nodes runs a [playbook](./files) to prepare them for their respective roles.
 The playbooks log to /var/log/ansible-prepare.log on each node. This file can be tailed until the playbook
