@@ -118,15 +118,23 @@
           # Where monitors will listen for clients
           public_network = 192.168.1.0/24
 
-          # enable the management of /etc/ceph/ceph.conf files on all hosts
-          mgr_cephadm_manage_etc_ceph_ceph_conf = true
-
           # Allow deleting cephfs volumes
           mon_allow_pool_delete = true
 
+          [mgr]
+          # enable the management of /etc/ceph/ceph.conf files on all hosts
+          mgr_cephadm_manage_etc_ceph_ceph_conf = true
+
+          [osd]
+          # 2GiB max
+          osd_memory_target = 2147000000
+
     - name: Write the ceph private key
       when: ansible_hostname.startswith("ceph0")
-      shell: mv /var/opt/id_ed25519 /home/debian/.ssh/ && chown debian:debian /home/debian/.ssh/id_ed25519
+      shell: |
+        mv /var/opt/id_ed25519 /home/debian/.ssh/ && \
+        chown debian:debian /home/debian/.ssh/id_ed25519 && \
+        chmod 600 /home/debian/.ssh/id_ed25519
 
     - name: Write the ceph public key to authorized_keys
       when: not ansible_hostname.startswith("ceph0")
