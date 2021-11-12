@@ -113,6 +113,12 @@
         state: present
         reload: true
         sysctl_file: /etc/sysctl.d/ZZ-rke.conf
+    
+    - name: Add the dns search domain to resolvconf
+      lineinfile:
+        path: /etc/resolvconf/resolv.conf.d/tail
+        regexp: "^dns-search"
+        line: dns-search localdomain.net
 
     - debug: 
         msg: "Playbook finished on {{ ansible_date_time.date }} at {{ ansible_date_time.time }} {{ ansible_date_time.tz }}"
