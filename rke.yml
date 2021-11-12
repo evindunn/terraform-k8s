@@ -8,21 +8,21 @@ authentication:
       - "k8s2.localdomain.net"
 
 nodes:
-  - address: 192.168.1.70
+  - address: k8s0.localdomain.net
     user: debian
     role:
       - controlplane
       - etcd
       - worker
 
-  - address: 192.168.1.71
+  - address: k8s1.localdomain.net
     user: debian
     role:
       - controlplane
       - etcd
       - worker
 
-  - address: 192.168.1.72
+  - address: k8s2.localdomain.net
     user: debian
     role:
       - controlplane
