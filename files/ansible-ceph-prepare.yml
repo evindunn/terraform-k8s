@@ -11,22 +11,20 @@
 
     - name: Install docker dependencies
       package:
-        name: "{{ item }}"
         state: present
-      loop:
-        - apt-transport-https
-        - ca-certificates
-        - curl
-        - gnupg
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
 
     - name: Install extra packages
       package:
-        name: "{{ item }}"
         state: present
-      loop:
-        - apparmor
-        - apparmor-profiles
-        - apparmor-profiles-extra
+        name: 
+          - apparmor
+          - apparmor-profiles
+          - apparmor-profiles-extra
 
     - name: Make sure apparmor service is enabled
       service:
@@ -63,12 +61,11 @@
 
     - name: Install docker
       package:
-        name: "{{ item }}"
         state: present
-      loop:
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
 
     - name: Make sure docker is enabled
       service:
@@ -94,11 +91,10 @@
 
     - name: Install ceph packages
       package:
-        name: "{{ item }}"
         state: present
-      loop:
-        - ceph-common
-        - cephadm
+        name:
+          - ceph-common
+          - cephadm
 
     - name: Write the initial ceph config
       when: ansible_hostname.startswith("ceph0")
