@@ -117,12 +117,13 @@
           mgr_cephadm_manage_etc_ceph_ceph_conf = true
 
           [osd]
-          # 2GiB max
           osd_pool_default_size = 2
           osd_pool_default_min_size = 1
           osd_pool_default_pg_autoscale_mode = on
+          osd_memory_target = 2G
 
-          osd_memory_target = 2147000000
+          [mds]
+          mds_cache_memory_limit = 1G
 
     - name: Write the ceph private key
       when: ansible_hostname.startswith("ceph0")
