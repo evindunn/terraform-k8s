@@ -1,5 +1,8 @@
 ssh_key_path: ~/.ssh/terraform_rsa
 
+ingress:
+  provider: none
+
 authentication:
     strategy: x509
     sans:

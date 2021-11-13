@@ -1,6 +1,7 @@
 module "ceph_domains" {
   source            = "github.com/evindunn/terraform-kvm-module"
   hostname_prefix   = "ceph"
+  os_disk_size      = 17180000256 # 16GiB
   cpu_count         = 3
   ram_size          = 4096
   ssh_public_key    = file(pathexpand(var.ssh_key_public))
@@ -35,13 +36,13 @@ module "ceph_domains" {
 module "k8s_domains" {
   source            = "github.com/evindunn/terraform-kvm-module"
   hostname_prefix   = "k8s"
+  os_disk_size      = 34360000512 # 32 GiB
   cpu_count         = 3
   ram_size          = 4096
   ssh_public_key    = file(pathexpand(var.ssh_key_public))
   node_count        = 3
   ansible_playbook  = file("${path.module}/files/ansible-k8s-prepare.yml")
   network_id        = libvirt_network.bridge.id
-  os_disk_size      = 34360000512 # 32 GiB
   mac_addresses     = [
     "54:52:00:00:02:00",
     "54:52:00:00:02:01",
