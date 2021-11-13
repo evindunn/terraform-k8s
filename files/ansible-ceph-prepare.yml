@@ -127,6 +127,33 @@
           [mds]
           mds_cache_memory_limit = {{ (ansible_memory_mb.real.total / 4) | int }}Mi
 
+    - name: Write ceph-prepare script
+      when: ansible_hostname.startswith("ceph0")
+      blockinfile:
+        path: /etc/systemd/system/ceph-prepare.service
+        create: yes
+        block: |
+          [Unit]
+          Description=Prepares ceph for startup/shutdown
+          Requires=ceph.target
+          After=ceph.target
+
+          [Service]
+          Type=oneshot
+          RemainAfterExit=true
+          ExecStart=sh -c 'ceph osd unset noout; ceph osd unset norebalance'
+          ExecStop=sh -c 'ceph osd set noout; ceph osd set norebalance'
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Enable ceph-prepare script
+      when: ansible_hostname.startswith("ceph0")
+      systemd:
+        name: ceph-prepare
+        enabled: true
+        daemon_reload: true
+
     - name: Write the ceph private key
       when: ansible_hostname.startswith("ceph0")
       shell: |

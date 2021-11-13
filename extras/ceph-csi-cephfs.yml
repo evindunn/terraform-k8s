@@ -2,7 +2,7 @@
 # Needs >= 3.4.0 for storageclass & secret to be created
 
 csiConfig:
-  - clusterID: 3be4a356-40ad-11ec-ac54-545200000100
+  - clusterID: e88ad466-43f2-11ec-a382-1ff37bb1681e
     monitors:
       - ceph0.localdomain.net
       - ceph1.localdomain.net
@@ -11,7 +11,7 @@ csiConfig:
 storageClass:
   create: true
   name: cephfs
-  clusterID: 3be4a356-40ad-11ec-ac54-545200000100
+  clusterID: e88ad466-43f2-11ec-a382-1ff37bb1681e
   fsName: kubernetes
   mountOptions:
     - debug
@@ -20,4 +20,4 @@ storageClass:
 secret:
   create: true
   adminID: admin
-  adminKey: "AQA/SolhuoKZORAA7sl/fhcda6GCAV+snHVYuw=="
+  adminKey: "AQC/x45huE9zDRAAI6i+Yd96QUA9SYP2Fqjhfg=="
