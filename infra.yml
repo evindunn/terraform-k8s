@@ -1,0 +1,119 @@
+storagePool: k8s
+
+networks:
+  bridge:
+    mode: bridge
+    bridge: br0
+    dhcp:
+      enabled: false
+    dns:
+      enabled: false
+
+  clusternet:
+    mode: nat
+    domain: clusternet
+    addresses: ["192.168.110.0/24"]
+    dhcp:
+      enabled: true
+      hosts:
+        - mac-address: 54:52:00:00:01:03
+          ip: 192.168.110.2
+        - mac-address: 54:52:00:00:01:04
+          ip: 192.168.110.3
+        - mac-address: 54:52:00:00:01:05
+          ip: 192.168.110.4
+        - mac-address: 54:52:00:00:02:03
+          ip: 192.168.110.5
+        - mac-address: 54:52:00:00:02:04
+          ip: 192.168.110.6
+        - mac-address: 54:52:00:00:02:05
+          ip: 192.168.110.7
+    dns:
+      enabled: true
+      hosts:
+        - ip: 192.168.110.2
+          hostname: ceph0.clusternet
+        - ip: 192.168.110.3 
+          hostname: ceph1.clusternet
+        - ip: 192.168.110.4 
+          hostname: ceph2.clusternet
+        - ip: 192.168.110.5
+          hostname: k8s0.clusternet
+        - ip: 192.168.110.6
+          hostname: k8s1.clusternet
+        - ip: 192.168.110.7
+          hostname: k8s2.clusternet
+
+_domainsCommon: &domainsCommon
+  baseImage: "https://cdimage.debian.org/cdimage/cloud/bullseye/latest/debian-11-genericcloud-amd64.qcow2"
+  cpuCount: 3
+  ramSize: 4096
+  sshPublicKey: "~/.ssh/terraform_rsa"
+
+_cephCommon: &cephCommon
+  << : *domainsCommon
+  ansiblePlaybook: "./files/ansible-ceph-prepare.yml"
+  osDiskSize: 17180000256 # 16GiB
+  ramSize: 4096
+  dataVolumes:
+    count: 2
+    size: 5369000000 # 5GiB
+
+_k8sCommon: &k8sCommon
+  << : *domainsCommon
+  ansiblePlaybook: "./files/ansible-k8s-prepare.yml"
+  osDiskSize: 34360000512 # 32 GiB
+
+domains:
+  ceph0: 
+    << : *cephCommon
+    macAddresses:
+      - address: 54:52:00:00:01:00
+        networkName: bridge
+      - address: 54:52:00:00:01:03
+        networkName: clusternet
+    extraFiles:
+      - path: /var/opt/id_ed25519
+        owner: "debian:debian"
+        permissions: "0600"
+        content: "test"
+
+  ceph1: 
+    << : *cephCommon
+    macAddresses: 
+      - address: 54:52:00:00:01:01
+        networkName: bridge
+      - address: 54:52:00:00:01:04
+        networkName: clusternet
+
+  ceph2: 
+    << : *cephCommon
+    macAddresses: 
+      - address: 54:52:00:00:01:02
+        networkName: bridge
+      - address: 54:52:00:00:01:05
+        networkName: clusternet
+
+  k8s0:
+    << : *k8sCommon
+    macAddresses:
+      - address: 54:52:00:00:02:00
+        networkName: bridge
+      - address: 54:52:00:00:02:03
+        networkName: clusternet
+
+  k8s0:
+    << : *k8sCommon
+    macAddresses:
+      - address: 54:52:00:00:02:01
+        networkName: bridge
+      - address: 54:52:00:00:02:04
+        networkName: clusternet
+
+  k8s0:
+    << : *k8sCommon
+    macAddresses:
+      - address: 54:52:00:00:02:02
+        networkName: bridge
+      - address: 54:52:00:00:02:05
+        networkName: clusternet

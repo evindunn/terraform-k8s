@@ -3,7 +3,7 @@ terraform {
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = ">= 0.6.3"
+      version = ">= 0.6.11"
     }
     tls = {
       source = "hashicorp/tls"
@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://proliant/system"
+  uri = "qemu:///system"
 }
 
 provider "tls" {}

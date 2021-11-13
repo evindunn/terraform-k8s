@@ -1,52 +1,40 @@
-module "ceph_domains" {
-  source            = "github.com/evindunn/terraform-kvm-module"
-  hostname_prefix   = "ceph"
-  os_disk_size      = 17180000256 # 16GiB
-  cpu_count         = 3
-  ram_size          = 4096
-  ssh_public_key    = file(pathexpand(var.ssh_key_public))
-  node_count        = 3
-  network_id        = libvirt_network.bridge.id
-  mac_addresses     = [
-    "54:52:00:00:01:00",
-    "54:52:00:00:01:01",
-    "54:52:00:00:01:02",
-  ]
-  data_volumes      = {
-    count = 3
-    size  = 5369000000 # 5GiB
+resource "libvirt_domain" "vms" {
+  for_each  = local.domains
+  autostart = true
+  name      = each.key
+  vcpu      = each.value.cpuCount
+  memory    = each.value.ramSize
+  cloudinit = libvirt_cloudinit_disk.cloud_inits[each.key].id
+
+  # https://bugs.launchpad.net/cloud-images/+bug/1573095
+  console {
+    type        = "pty"
+    target_port = "0"
+    target_type = "serial"
   }
-  ansible_playbook  = templatefile(
-    "${path.module}/files/ansible-ceph-prepare.yml",
-    {
-      ceph_public_key = tls_private_key.ceph_key_pair.public_key_openssh
-    }
-  )
-  extra_files       = [
-    {
-      hostname      = "ceph0"
-      path          = "/var/opt/id_ed25519"
-      owner         = "debian:debian"
-      permissions   = "0600"
-      content       = tls_private_key.ceph_key_pair.private_key_pem
-    }
-  ]
-}
 
-module "k8s_domains" {
-  source            = "github.com/evindunn/terraform-kvm-module"
-  hostname_prefix   = "k8s"
-  os_disk_size      = 34360000512 # 32 GiB
-  cpu_count         = 3
-  ram_size          = 4096
-  ssh_public_key    = file(pathexpand(var.ssh_key_public))
-  node_count        = 3
-  ansible_playbook  = file("${path.module}/files/ansible-k8s-prepare.yml")
-  network_id        = libvirt_network.bridge.id
-  mac_addresses     = [
-    "54:52:00:00:02:00",
-    "54:52:00:00:02:01",
-    "54:52:00:00:02:02",
-  ]
-}
+  disk {
+    volume_id = libvirt_volume.os_volumes[each.key].id
+    scsi      = true
+  }
 
+  dynamic "disk" {
+    for_each = toset([
+      for vol in libvirt_volume.data_volumes :
+      vol if split("_", vol.name)[0] == each.key
+    ])
+    content {
+      volume_id = disk.value.id
+      scsi      = true
+    }
+  }
+
+  dynamic "network_interface" {
+    for_each = each.value.macAddresses
+    content {
+      hostname   = each.key
+      mac        = network_interface.value.address
+      network_id = libvirt_network.networks[network_interface.value.networkName].id
+    }
+  }
+}
