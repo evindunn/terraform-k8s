@@ -34,6 +34,13 @@ networks:
 _domainsCommon: &domainsCommon
   baseImage: "https://cdimage.debian.org/cdimage/cloud/bullseye/latest/debian-11-genericcloud-amd64.qcow2"
   cpuCount: 3
+  dns:
+    servers:
+      - 192.168.110.1
+      - 192.168.1.88
+    search:
+      - clusternet
+      - localdomain.net
   ramSize: 4096
   sshPublicKey: "~/.ssh/terraform_rsa.pub"
 

@@ -2,7 +2,13 @@ resource "libvirt_cloudinit_disk" "cloud_inits" {
   for_each          = local.domains
   name              = "cloud_init_${each.key}.iso"
   pool              = libvirt_pool.disk_pool.name
-  network_config    = file("${path.module}/files/network.cfg")
+  network_config    = templatefile(
+    "${path.module}/templates/network.cfg",
+    {
+      dns_servers: each.value.dns.servers,
+      dns_search: each.value.dns.search
+    }
+  )
   user_data         = templatefile(
     "${path.module}/templates/cloud_init.cfg",
     {

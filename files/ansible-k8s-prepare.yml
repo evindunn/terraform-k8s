@@ -128,10 +128,7 @@
     - name: Add the dns search domain to resolvconf
       lineinfile:
         path: /etc/resolvconf/resolv.conf.d/tail
-        line: "{{ item }}"
-      loop:
-        # - "search clusternet localdomain.net"
-        - "options edns0 trust-ad"
+        line: "options edns0 trust-ad"
 
     - debug: 
         msg: "Playbook finished on {{ ansible_date_time.date }} at {{ ansible_date_time.time }} {{ ansible_date_time.tz }}"
