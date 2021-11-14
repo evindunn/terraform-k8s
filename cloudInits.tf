@@ -7,8 +7,8 @@ resource "libvirt_cloudinit_disk" "cloud_inits" {
     "${path.module}/templates/cloud_init.cfg",
     {
       hostname          = each.key
-      ssh_key           = each.value.sshPublicKey
-      ansible_playbook  = lookup(each.value, "ansiblePlaybook", null)
+      ssh_key           = file(pathexpand(each.value.sshPublicKey))
+      ansible_playbook  = file(pathexpand(lookup(each.value, "ansiblePlaybook", null)))
       extra_files       = lookup(each.value, "extraFiles", [])
     }
   )

@@ -3,6 +3,10 @@ ssh_key_path: ~/.ssh/terraform_rsa
 ingress:
   provider: none
 
+network:
+  options:
+    canal_iface: ens4
+
 authentication:
     strategy: x509
     sans:

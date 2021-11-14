@@ -154,22 +154,22 @@
         enabled: true
         daemon_reload: true
 
-    - name: Write the ceph private key
-      when: ansible_hostname.startswith("ceph0")
-      shell: |
-        mv /var/opt/id_ed25519 /home/debian/.ssh/ && \
-        chown debian:debian /home/debian/.ssh/id_ed25519 && \
-        chmod 600 /home/debian/.ssh/id_ed25519
+    # - name: Write the ceph private key
+    #   when: ansible_hostname.startswith("ceph0")
+    #   shell: |
+    #     mv /var/opt/id_ed25519 /home/debian/.ssh/ && \
+    #     chown debian:debian /home/debian/.ssh/id_ed25519 && \
+    #     chmod 600 /home/debian/.ssh/id_ed25519
 
-    - name: Write the ceph public key to authorized_keys
-      when: not ansible_hostname.startswith("ceph0")
-      blockinfile:
-        path: /home/debian/.ssh/authorized_keys
-        create: yes
-        owner: debian
-        group: debian
-        mode: "644"
-        block: "${ceph_public_key}" 
+    # - name: Write the ceph public key to authorized_keys
+    #   when: not ansible_hostname.startswith("ceph0")
+    #   blockinfile:
+    #     path: /home/debian/.ssh/authorized_keys
+    #     create: yes
+    #     owner: debian
+    #     group: debian
+    #     mode: "644"
+    #     block: "${ceph_public_key}"
 
     - name: Add the dns search domain to resolvconf
       lineinfile:

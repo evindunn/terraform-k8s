@@ -27,7 +27,7 @@ resource "libvirt_network" "networks" {
       for_each  = lookup(each.value.dhcp, "hosts", [])
       content {
         option_name   = "dhcp-host"
-        option_value  = "${options.value["mac-address"]},${options.value.ip}"
+        option_value  = "id:${options.value["mac-address"]},${options.value.ip}"
       }
     }
   }

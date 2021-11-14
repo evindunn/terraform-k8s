@@ -12,9 +12,9 @@ networks:
   clusternet:
     mode: nat
     domain: clusternet
-    addresses: ["192.168.110.0/24"]
+    addresses: ["192.168.110.1/32"]
     dhcp:
-      enabled: true
+      enabled: false
       hosts:
         - mac-address: 54:52:00:00:01:03
           ip: 192.168.110.2
@@ -48,7 +48,7 @@ _domainsCommon: &domainsCommon
   baseImage: "https://cdimage.debian.org/cdimage/cloud/bullseye/latest/debian-11-genericcloud-amd64.qcow2"
   cpuCount: 3
   ramSize: 4096
-  sshPublicKey: "~/.ssh/terraform_rsa"
+  sshPublicKey: "~/.ssh/terraform_rsa.pub"
 
 _cephCommon: &cephCommon
   << : *domainsCommon
@@ -74,7 +74,7 @@ domains:
         networkName: clusternet
     extraFiles:
       - path: /var/opt/id_ed25519
-        owner: "debian:debian"
+        owner: "ubuntu:ubuntu"
         permissions: "0600"
         content: "test"
 

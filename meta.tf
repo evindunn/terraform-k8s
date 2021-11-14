@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu:///system"
+  uri = "qemu+ssh://proliant/system"
 }
 
 provider "tls" {}
