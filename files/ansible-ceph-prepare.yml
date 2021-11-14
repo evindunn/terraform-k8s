@@ -120,11 +120,10 @@
           osd_pool_default_size = 2
           osd_pool_default_min_size = 1
           osd_pool_default_pg_autoscale_mode = on
-
-          [mon]
-          # Where monitors will listen for clients
+          cluster_network = 192.168.110.0/24
           public_network = 192.168.1.0/24
 
+          [mon]
           # Allow deleting cephfs volumes
           mon_allow_pool_delete = true
 
