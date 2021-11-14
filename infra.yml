@@ -60,11 +60,15 @@ domains:
       - mac: 54:52:00:00:01:03
         networkName: clusternet
         ip: 192.168.110.2
-    extraFiles:
-      - path: /var/opt/id_ed25519
-        owner: "ubuntu:ubuntu"
-        permissions: "0600"
-        content: "test"
+    # One day debian will update cloud-init to 21.4 and we can write directly
+    # to /home/debian/.ssh/id_ed25519 using defer=true
+    # https://cloudinit.readthedocs.io/en/21.4/topics/modules.html#write-files
+    # For now this is hacky, ansible copies it to /home/debian/.ssh/id_ed25519
+    # extraFiles:
+    #   - path: /var/opt/id_ed25519
+    #     owner: "debian:debian"
+    #     permissions: "0600"
+    #     content: "test"
 
   ceph1: 
     << : *cephCommon

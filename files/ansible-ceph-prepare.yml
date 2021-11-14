@@ -11,8 +11,8 @@
         reload: true
         sysctl_file: /etc/sysctl.d/ZZ-disable-ipv6.conf
       loop:
-        - "net.ipv6.conf.all.disable_ipv6=1"
-        - "net.ipv6.conf.default.disable_ipv6=1"
+        - "net.ipv6.conf.all.disable_ipv6"
+        - "net.ipv6.conf.default.disable_ipv6"
 
     - name: Upgrade all packages
       apt:
@@ -186,7 +186,7 @@
         path: /etc/resolvconf/resolv.conf.d/tail
         line: "{{ item }}"
       loop:
-        - "search localdomain.net"
+        - "search clusternet localdomain.net"
         - "options edns0 trust-ad"
 
     - debug: 

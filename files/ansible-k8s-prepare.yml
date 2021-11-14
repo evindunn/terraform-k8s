@@ -11,8 +11,8 @@
         reload: true
         sysctl_file: /etc/sysctl.d/ZZ-disable-ipv6.conf
       loop:
-        - "net.ipv6.conf.all.disable_ipv6=1"
-        - "net.ipv6.conf.default.disable_ipv6=1"
+        - "net.ipv6.conf.all.disable_ipv6"
+        - "net.ipv6.conf.default.disable_ipv6"
 
     - name: Upgrade all packages
       apt:
@@ -130,7 +130,7 @@
         path: /etc/resolvconf/resolv.conf.d/tail
         line: "{{ item }}"
       loop:
-        - "search localdomain.net"
+        - "search clusternet localdomain.net"
         - "options edns0 trust-ad"
 
     - debug: 
@@ -139,7 +139,7 @@
   vars:
     ceph_version: pacific
 
-    # Commented ones aren't present in debian
+    # Commented ones aren't present in debian 11 kernel >=5.10.0-9-cloud-amd64
     required_kernel_modules:
       - br_netfilter
       - ip6_udp_tunnel
@@ -155,7 +155,7 @@
       - nf_conntrack_netlink
       - nf_defrag_ipv4
       - nf_nat
-      - nf_nat_ipv4
+      # - nf_nat_ipv4
       # - nf_nat_masquerade_ipv4
       - nfnetlink
       - rbd
