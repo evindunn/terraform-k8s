@@ -55,10 +55,9 @@ domains:
   ceph0: 
     << : *cephCommon
     networkInterfaces:
-      - mac: 54:52:00:00:01:00
-        networkName: bridge
-      - mac: 54:52:00:00:01:03
-        networkName: clusternet
+      - networkName: bridge
+        mac: 54:52:00:00:01:00
+      - networkName: clusternet
         ip: 192.168.110.2
     # One day debian will update cloud-init to 21.4 and we can write directly
     # to /home/debian/.ssh/id_ed25519 using defer=true
@@ -73,44 +72,39 @@ domains:
   ceph1: 
     << : *cephCommon
     networkInterfaces: 
-      - mac: 54:52:00:00:01:01
-        networkName: bridge
-      - mac: 54:52:00:00:01:04
-        networkName: clusternet
+      - networkName: bridge
+        mac: 54:52:00:00:01:01
+      - networkName: clusternet
         ip: 192.168.110.3
 
   ceph2: 
     << : *cephCommon
     networkInterfaces: 
-      - mac: 54:52:00:00:01:02
-        networkName: bridge
-      - mac: 54:52:00:00:01:05
-        networkName: clusternet
+      - networkName: bridge
+        mac: 54:52:00:00:01:02
+      - networkName: clusternet
         ip: 192.168.110.4
 
   k8s0:
     << : *k8sCommon
     networkInterfaces:
-      - mac: 54:52:00:00:02:00
-        networkName: bridge
-      - mac: 54:52:00:00:02:03
-        networkName: clusternet
+      - networkName: bridge
+        mac: 54:52:00:00:02:00
+      - networkName: clusternet
         ip: 192.168.110.5
 
   k8s1:
     << : *k8sCommon
     networkInterfaces:
-      - mac: 54:52:00:00:02:01
-        networkName: bridge
-      - mac: 54:52:00:00:02:04
-        networkName: clusternet
+      - networkName: bridge
+        mac: 54:52:00:00:02:01
+      - networkName: clusternet
         ip: 192.168.110.6
 
   k8s2:
     << : *k8sCommon
     networkInterfaces:
-      - mac: 54:52:00:00:02:02
-        networkName: bridge
-      - mac: 54:52:00:00:02:05
-        networkName: clusternet
+      - networkName: bridge
+        mac: 54:52:00:00:02:02
+      - networkName: clusternet
         ip: 192.168.110.7

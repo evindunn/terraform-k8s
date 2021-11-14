@@ -33,7 +33,7 @@ resource "libvirt_domain" "vms" {
     for_each = each.value.networkInterfaces
     content {
       hostname   = each.key
-      mac        = network_interface.value.mac
+      mac        = lookup(network_interface.value, "mac", null)
       network_id = libvirt_network.networks[network_interface.value.networkName].id
       addresses  = lookup(network_interface.value, "ip", null) == null ? [] : [network_interface.value.ip]
     }
