@@ -21,14 +21,4 @@ resource "libvirt_network" "networks" {
   dhcp {
     enabled = each.value.dhcp.enabled
   }
-
-  dnsmasq_options {
-    dynamic "options" {
-      for_each  = lookup(each.value.dhcp, "hosts", [])
-      content {
-        option_name   = "dhcp-host"
-        option_value  = "id:${options.value["mac-address"]},${options.value.ip}"
-      }
-    }
-  }
 }

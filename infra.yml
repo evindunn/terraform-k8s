@@ -12,22 +12,9 @@ networks:
   clusternet:
     mode: nat
     domain: clusternet
-    addresses: ["192.168.110.1/32"]
+    addresses: ["192.168.110.0/24"]
     dhcp:
       enabled: false
-      hosts:
-        - mac-address: 54:52:00:00:01:03
-          ip: 192.168.110.2
-        - mac-address: 54:52:00:00:01:04
-          ip: 192.168.110.3
-        - mac-address: 54:52:00:00:01:05
-          ip: 192.168.110.4
-        - mac-address: 54:52:00:00:02:03
-          ip: 192.168.110.5
-        - mac-address: 54:52:00:00:02:04
-          ip: 192.168.110.6
-        - mac-address: 54:52:00:00:02:05
-          ip: 192.168.110.7
     dns:
       enabled: true
       hosts:
@@ -67,11 +54,12 @@ _k8sCommon: &k8sCommon
 domains:
   ceph0: 
     << : *cephCommon
-    macAddresses:
-      - address: 54:52:00:00:01:00
+    networkInterfaces:
+      - mac: 54:52:00:00:01:00
         networkName: bridge
-      - address: 54:52:00:00:01:03
+      - mac: 54:52:00:00:01:03
         networkName: clusternet
+        ip: 192.168.110.2
     extraFiles:
       - path: /var/opt/id_ed25519
         owner: "ubuntu:ubuntu"
@@ -80,40 +68,45 @@ domains:
 
   ceph1: 
     << : *cephCommon
-    macAddresses: 
-      - address: 54:52:00:00:01:01
+    networkInterfaces: 
+      - mac: 54:52:00:00:01:01
         networkName: bridge
-      - address: 54:52:00:00:01:04
+      - mac: 54:52:00:00:01:04
         networkName: clusternet
+        ip: 192.168.110.3
 
   ceph2: 
     << : *cephCommon
-    macAddresses: 
-      - address: 54:52:00:00:01:02
+    networkInterfaces: 
+      - mac: 54:52:00:00:01:02
         networkName: bridge
-      - address: 54:52:00:00:01:05
+      - mac: 54:52:00:00:01:05
         networkName: clusternet
+        ip: 192.168.110.4
 
   k8s0:
     << : *k8sCommon
-    macAddresses:
-      - address: 54:52:00:00:02:00
+    networkInterfaces:
+      - mac: 54:52:00:00:02:00
         networkName: bridge
-      - address: 54:52:00:00:02:03
+      - mac: 54:52:00:00:02:03
         networkName: clusternet
+        ip: 192.168.110.5
 
-  k8s0:
+  k8s1:
     << : *k8sCommon
-    macAddresses:
-      - address: 54:52:00:00:02:01
+    networkInterfaces:
+      - mac: 54:52:00:00:02:01
         networkName: bridge
-      - address: 54:52:00:00:02:04
+      - mac: 54:52:00:00:02:04
         networkName: clusternet
+        ip: 192.168.110.6
 
-  k8s0:
+  k8s2:
     << : *k8sCommon
-    macAddresses:
-      - address: 54:52:00:00:02:02
+    networkInterfaces:
+      - mac: 54:52:00:00:02:02
         networkName: bridge
-      - address: 54:52:00:00:02:05
+      - mac: 54:52:00:00:02:05
         networkName: clusternet
+        ip: 192.168.110.7
