@@ -1,7 +1,7 @@
-output "public_key" {
-  value = var.ssh_key_public
+output "networks" {
+  value = libvirt_network.networks
 }
 
 output "vms" {
-  value = local.domains
+  value = libvirt_domain.vms
 }

@@ -16,6 +16,7 @@ authentication:
 
 nodes:
   - address: k8s0.localdomain.net
+    internal_address: k8s0.clusternet
     user: debian
     role:
       - controlplane
@@ -23,6 +24,7 @@ nodes:
       - worker
 
   - address: k8s1.localdomain.net
+    internal_address: k8s1.clusternet
     user: debian
     role:
       - controlplane
@@ -30,6 +32,7 @@ nodes:
       - worker
 
   - address: k8s2.localdomain.net
+    internal_address: k8s2.clusternet
     user: debian
     role:
       - controlplane

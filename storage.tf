@@ -1,3 +1,18 @@
+resource "libvirt_pool" "disk_pool" {
+  name = local.storagePoolName
+  type = "dir"
+  path = "/var/lib/libvirt/images/${local.storagePoolName}"
+}
+
+resource "libvirt_volume" "base_images" {
+  for_each  = toset([for hostname, domain in local.domains : domain.baseImage])
+  name      = element(split("/", each.value), length(split("/", each.value)) - 1)
+  pool      = libvirt_pool.disk_pool.name
+  source    = each.value
+  format    = "qcow2"
+}
+
+
 resource "libvirt_volume" "os_volumes" {
   for_each        = local.domains
   base_volume_id  = lookup(libvirt_volume.base_images, each.value.baseImage, null).id

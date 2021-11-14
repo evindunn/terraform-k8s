@@ -130,7 +130,7 @@
         path: /etc/resolvconf/resolv.conf.d/tail
         line: "{{ item }}"
       loop:
-        - "search clusternet localdomain.net"
+        # - "search clusternet localdomain.net"
         - "options edns0 trust-ad"
 
     - debug: 
